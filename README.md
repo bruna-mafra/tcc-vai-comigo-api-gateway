@@ -17,15 +17,12 @@ A **API Gateway** é o ponto único de entrada para o backend do **Vai Comigo**.
   - Correlação de requisições
   - Tratamento padronizado de erros
 
-### ❌ Não faz
-
-❌ Não contem regra de negócio  
-❌ Não acessa banco de dados  
-❌ Não realiza processamento pesado
-
 ---
 
 ## 🏗️ Arquitetura
+
+A API Gateway está inserida na seguinte arquitetura:
+![Arquitetura do User Service](./docs/architecture.png)
 
 ### Stack Tecnológico
 

@@ -1,0 +1,8 @@
+.env.example
+.env.local
+.env.test
+node_modules
+dist
+coverage
+.DS_Store
+*.log

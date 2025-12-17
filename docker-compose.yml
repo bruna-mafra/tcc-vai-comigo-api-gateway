@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vai-comigo-api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      JWT_ISSUER: vai-comigo
+      JWT_AUDIENCE: vai-comigo-client
+      JWT_EXPIRATION: 24h
+      USER_SERVICE_URL: http://user-service:3001
+      RIDE_SERVICE_URL: http://ride-service:3002
+      CHAT_SERVICE_URL: http://chat-service:3003
+      MAPS_SERVICE_URL: http://maps-service:3004
+      REVIEW_SERVICE_URL: http://review-service:3005
+      RATE_LIMIT_TTL: 60000
+      RATE_LIMIT_LIMIT: 100
+      RATE_LIMIT_LIMIT_AUTHENTICATED: 300
+      LOG_LEVEL: debug
+    networks:
+      - vai-comigo-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    volumes:
+      - ./src:/app/src:ro
+    depends_on:
+      - user-service
+      - ride-service
+      - chat-service
+      - maps-service
+      - review-service
+
+  # Mock services for testing (these would be replaced with actual services)
+  user-service:
+    image: kennethreitz/httpbin
+    container_name: vai-comigo-user-service
+    networks:
+      - vai-comigo-network
+    environment:
+      PORT: 3001
+
+  ride-service:
+    image: kennethreitz/httpbin
+    container_name: vai-comigo-ride-service
+    networks:
+      - vai-comigo-network
+    environment:
+      PORT: 3002
+
+  chat-service:
+    image: kennethreitz/httpbin
+    container_name: vai-comigo-chat-service
+    networks:
+      - vai-comigo-network
+    environment:
+      PORT: 3003
+
+  maps-service:
+    image: kennethreitz/httpbin
+    container_name: vai-comigo-maps-service
+    networks:
+      - vai-comigo-network
+    environment:
+      PORT: 3004
+
+  review-service:
+    image: kennethreitz/httpbin
+    container_name: vai-comigo-review-service
+    networks:
+      - vai-comigo-network
+    environment:
+      PORT: 3005
+
+networks:
+  vai-comigo-network:
+    driver: bridge
